@@ -4,19 +4,19 @@ import { ApplicationContract } from '@ioc:Adonis/Core/Application';
 
 const ADAPTER_PROMPT_CHOICES = [
   {
-    name: '@inertiajs/inertia-vue' as const,
+    name: '@inertiajs/vue2' as const,
     message: 'Vue 2',
   },
   {
-    name: '@inertiajs/inertia-vue3' as const,
+    name: '@inertiajs/vue3' as const,
     message: 'Vue 3',
   },
   {
-    name: '@inertiajs/inertia-react' as const,
+    name: '@inertiajs/react' as const,
     message: 'React',
   },
   {
-    name: '@inertiajs/inertia-svelte' as const,
+    name: '@inertiajs/svelte' as const,
     message: 'Svelte',
   },
 ];
@@ -55,7 +55,6 @@ function getInstallInertiaUserPref(sink: typeof sinkStatic) {
  */
 function getSsrUserPref(sink: typeof sinkStatic) {
   return sink.getPrompt().confirm('Would you like to use SSR?', {
-    hint: 'Svelte is currently unsupported',
     default: false,
   });
 }
@@ -91,14 +90,12 @@ export default async function instructions(projectRoot: string, app: Application
     /**
      * Install required dependencies
      */
-
-    pkg.install('@inertiajs/inertia', undefined, false);
     pkg.install(adapter, undefined, false);
 
     /**
      * Find the list of packages we have to remove
      */
-    const packages = ['@inertia/inertia', adapter].map((p) => sink.logger.colors.green(p)).join(', ');
+    const packages = [adapter].map((p) => sink.logger.colors.green(p)).join(', ');
     const spinner = sink.logger.await(`Installing ${packages}`);
 
     try {
@@ -112,19 +109,22 @@ export default async function instructions(projectRoot: string, app: Application
     spinner.stop();
   }
 
-  if (shouldEnableSsr) {
+  /*   if (shouldEnableSsr) {
+    // TODO: add webpack-node-externals
     sink.logger.info('Adapter:', adapter);
     const spinner = sink.logger.await(`Installing SSR dependencies`);
 
     try {
       pkg.install('webpack-node-externals', undefined, true);
 
-      if (adapter === '@inertiajs/inertia-vue') {
+      if (adapter === '@inertiajs/vue') {
         pkg.install('vue-server-renderer', undefined, false);
-      } else if (adapter === '@inertiajs/inertia-vue3') {
+      } else if (adapter === '@inertiajs/vue3') {
         pkg.install('@vue/server-renderer', undefined, false);
-      } else {
+      } else if (adapter === '@inertiajs/react') {
         pkg.install('react-dom', undefined, false);
+      } else {
+        pkg.install('@vue/server-renderer', undefined, false);
       }
 
       await pkg.commitAsync();
@@ -133,7 +133,7 @@ export default async function instructions(projectRoot: string, app: Application
       spinner.update('Unable to install packages');
       sink.logger.fatal(error);
     }
-  }
+  } */
 
   /**
    * Generate inertia config

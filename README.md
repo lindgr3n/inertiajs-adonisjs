@@ -121,14 +121,18 @@ export default class UsersController {
       users,
       lazyProp: Inertia.lazy(() => {
         return { lazy: 'too lazy' };
-      })
+      }),
     });
   }
 }
 ```
+
 The data will be loaded on demand by the explicit Inertia visit with option
+
 ```typescript
-{ only: ['lazyProp']}
+{
+  only: ['lazyProp'];
+}
 ```
 
 ## Root template data
@@ -189,7 +193,7 @@ Inertia.share({
 Then we can access the params in our component like so:
 
 ```typescript
-import { usePage } from '@inertiajs/inertia-react';
+import { usePage } from '@inertiajs/react';
 
 const { params } = usePage().props;
 stardust.route('users.show', { id: params.id });
@@ -248,67 +252,63 @@ Yous entrypoint code will depend on your client-side framework of choice:
 ##### React
 
 ```jsx
-import React from 'react';
-import ReactDOMServer from 'react-dom/server';
-import { createInertiaApp } from '@inertiajs/inertia-react';
+import { createInertiaApp } from '@inertiajs/react';
+import { createRoot } from 'react-dom/client';
 
-export default function render(page) {
-  return createInertiaApp({
-    page,
-    render: ReactDOMServer.renderToString,
-    resolve: (name) => require(`./Pages/${name}`),
-    setup: ({ App, props }) => <App {...props} />,
-  });
-}
+createInertiaApp({
+  resolve: (name) => require(`./Pages/${name}`),
+  setup({ el, App, props }) {
+    createRoot(el).render(<App {...props} />);
+  },
+});
 ```
 
 ##### Vue3
 
 ```javascript
-import { createSSRApp, h } from 'vue';
-import { renderToString } from '@vue/server-renderer';
-import { createInertiaApp } from '@inertiajs/inertia-vue3';
+import { createApp, h } from 'vue';
+import { createInertiaApp } from '@inertiajs/vue3';
 
-export default function render(page) {
-  return createInertiaApp({
-    page,
-    render: renderToString,
-    resolve: (name) => require(`./Pages/${name}`),
-    setup({ app, props, plugin }) {
-      return createSSRApp({
-        render: () => h(app, props),
-      }).use(plugin);
-    },
-  });
-}
+createInertiaApp({
+  resolve: (name) => require(`./Pages/${name}`),
+  setup({ el, App, props, plugin }) {
+    createApp({ render: () => h(App, props) })
+      .use(plugin)
+      .mount(el);
+  },
+});
 ```
 
 ##### Vue2
 
 ```javascript
 import Vue from 'vue';
-import { createRenderer } from 'vue-server-renderer';
-import { createInertiaApp } from '@inertiajs/inertia-vue';
+import { createInertiaApp } from '@inertiajs/vue2';
 
-export default function render(page) {
-  return createInertiaApp({
-    page,
-    render: createRenderer().renderToString,
-    resolve: (name) => require(`./Pages/${name}`),
-    setup({ app, props, plugin }) {
-      Vue.use(plugin);
-      return new Vue({
-        render: (h) => h(app, props),
-      });
-    },
-  });
-}
+createInertiaApp({
+  resolve: (name) => require(`./Pages/${name}`),
+  setup({ el, App, props, plugin }) {
+    Vue.use(plugin);
+
+    new Vue({
+      render: (h) => h(App, props),
+    }).$mount(el);
+  },
+});
 ```
 
 ##### Svelte
 
-> 👷 SSR is not yet ready for the Svelte adapter,
-> but will added as soon as Inertia supports it.
+```javascript
+import { createInertiaApp } from '@inertiajs/svelte';
+
+createInertiaApp({
+  resolve: (name) => require(`./Pages/${name}.svelte`),
+  setup({ el, App, props }) {
+    new App({ target: el, props });
+  },
+});
+```
 
 #### Starting the SSR dev server
 
