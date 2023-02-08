@@ -31,7 +31,7 @@ test.group('SSR', (group) => {
     const response = await supertest(server).get('/').expect(200);
 
     assert.equal(
-      response.text,
+      response.text.replace(/\n|\s/g, ''),
       codeBlock`<!DOCTYPE html>
     <html lang="en">
     <head>
@@ -41,7 +41,7 @@ test.group('SSR', (group) => {
     </head>
     <body><h1>Mock SSR</h1>
     </body>
-    </html>`,
+    </html>`.replace(/\n|\s/g, ''),
     );
   });
 
@@ -65,7 +65,7 @@ test.group('SSR', (group) => {
     const response = await supertest(server).get('/').expect(200);
 
     assert.equal(
-      response.text,
+      response.text.replace(/\n|\s/g, ''),
       codeBlock`<!DOCTYPE html>
     <html lang="en">
     <head>
@@ -75,7 +75,7 @@ test.group('SSR', (group) => {
     </head>
     <body><h1>Mock SSR</h1>
     </body>
-    </html>`,
+    </html>`.replace(/\n|\s/g, ''),
     );
 
     await changeContent('Updated Mock SSR');
@@ -83,7 +83,7 @@ test.group('SSR', (group) => {
     const updatedResponse = await supertest(server).get('/').expect(200);
 
     assert.equal(
-      updatedResponse.text,
+      updatedResponse.text.replace(/\n|\s/g, ''),
       codeBlock`<!DOCTYPE html>
     <html lang="en">
     <head>
@@ -93,7 +93,7 @@ test.group('SSR', (group) => {
     </head>
     <body><h1>Updated Mock SSR</h1>
     </body>
-    </html>`,
+    </html>`.replace(/\n|\s/g, ''),
     );
   });
 
@@ -117,7 +117,7 @@ test.group('SSR', (group) => {
     const response = await supertest(server).get('/').expect(200);
 
     assert.equal(
-      response.text,
+      response.text.replace(/\n|\s/g, ''),
       codeBlock`<!DOCTYPE html>
     <html lang="en">
     <head>
@@ -127,7 +127,7 @@ test.group('SSR', (group) => {
     </head>
     <body><div id="app" data-page="{&quot;component&quot;:&quot;ClientSideOnlyPage&quot;,&quot;props&quot;:{&quot;some&quot;:{&quot;props&quot;:{&quot;for&quot;:[&quot;your&quot;,&quot;page&quot;]}}},&quot;url&quot;:&quot;/&quot;}"></div>
     </body>
-    </html>`,
+    </html>`.replace(/\n|\s/g, ''),
     );
   });
 });

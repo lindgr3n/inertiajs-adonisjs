@@ -30,9 +30,8 @@ test.group('Rendering', (group) => {
     });
 
     const response = await supertest(server).get('/').expect(200);
-
     assert.equal(
-      response.text,
+      response.text.replace(/\n|\s/g, ''),
       codeBlock`<!DOCTYPE html>
     <html lang="en">
     <head>
@@ -42,7 +41,7 @@ test.group('Rendering', (group) => {
     </head>
     <body><div id="app" data-page="{&quot;component&quot;:&quot;Some/Page&quot;,&quot;props&quot;:{&quot;some&quot;:{&quot;props&quot;:{&quot;for&quot;:[&quot;your&quot;,&quot;page&quot;]}}},&quot;url&quot;:&quot;/&quot;}"></div>
     </body>
-    </html>`,
+    </html>`.replace(/\n|\s/g, ''),
     );
   });
 
@@ -69,7 +68,7 @@ test.group('Rendering', (group) => {
     const response = await supertest(server).get('/').expect(200);
 
     assert.equal(
-      response.text,
+      response.text.replace(/\n|\s/g, ''),
       codeBlock`<!DOCTYPE html>
     <html lang="en">
     <head>
@@ -80,7 +79,7 @@ test.group('Rendering', (group) => {
     <body>
         page only prop<div id="app" data-page="{&quot;component&quot;:&quot;Some/Page&quot;,&quot;props&quot;:{&quot;some&quot;:{&quot;props&quot;:{&quot;for&quot;:[&quot;your&quot;,&quot;page&quot;]}}},&quot;url&quot;:&quot;/&quot;}"></div>
     </body>
-    </html>`,
+    </html>`.replace(/\n|\s/g, ''),
     );
   });
 

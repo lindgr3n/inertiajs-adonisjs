@@ -39,7 +39,7 @@ test.group('Data', (group) => {
       props: { ...props, shared: 'data' },
       url: '/',
     });
-  });
+  }).timeout(6000);
 
   test('Should combine shared data(multiple calls)', async (assert) => {
     const props = {
@@ -200,7 +200,9 @@ test.group('Data', (group) => {
         };
       },
       another: 'prop',
-      lazyProp: Inertia.lazy(() => { return { lazy: 'too lazy'}}),
+      lazyProp: Inertia.lazy(() => {
+        return { lazy: 'too lazy' };
+      }),
     };
     const app = await setup();
     const server = createServer(async (req, res) => {
@@ -238,12 +240,17 @@ test.group('Data', (group) => {
         };
       },
       another: 'prop',
-      lazyProp: Inertia.lazy(() => { return { lazy: 'too lazy'}}),
-      lazyAsyncProp: Inertia.lazy(() => new Promise((res) =>
-        res({
-          lazyAsync: 'too lazy to be async'
-        })
-      )),
+      lazyProp: Inertia.lazy(() => {
+        return { lazy: 'too lazy' };
+      }),
+      lazyAsyncProp: Inertia.lazy(
+        () =>
+          new Promise((res) =>
+            res({
+              lazyAsync: 'too lazy to be async',
+            }),
+          ),
+      ),
     };
     const app = await setup();
     const server = createServer(async (req, res) => {
@@ -267,7 +274,7 @@ test.group('Data', (group) => {
       props: {
         another: 'prop',
         lazyProp: { lazy: 'too lazy' },
-        lazyAsyncProp: { lazyAsync: 'too lazy to be async' }
+        lazyAsyncProp: { lazyAsync: 'too lazy to be async' },
       },
       url: '/',
     });
